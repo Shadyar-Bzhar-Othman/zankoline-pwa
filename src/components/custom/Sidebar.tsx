@@ -130,7 +130,7 @@ export function Sidebar({
 
         {!collapsed && (
           <div className="rounded-lg bg-accent px-3 py-2.5">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
               {t("yourGrade")}
             </p>
             <p className="text-xl font-semibold text-accent-foreground">
@@ -139,9 +139,9 @@ export function Sidebar({
           </div>
         )}
         {collapsed && (
-          <div className="flex justify-center">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-              <span className="text-[9px] font-bold text-accent-foreground">
+          <div className="flex justify-center w-full">
+            <div className="w-full h-8 rounded-lg bg-accent flex items-center justify-center">
+              <span className="font-bold text-accent-foreground">
                 {Math.round(grade)}
               </span>
             </div>
