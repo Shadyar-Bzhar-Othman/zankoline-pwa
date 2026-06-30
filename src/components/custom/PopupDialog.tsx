@@ -73,7 +73,7 @@ export const PopupDialog = ({
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <Save className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-sm sm:text-xl font-semibold text-gray-900 dark:text-white">
               {editMode ? t("headerTextUpdate") : t("headerText")}
             </h2>
           </div>

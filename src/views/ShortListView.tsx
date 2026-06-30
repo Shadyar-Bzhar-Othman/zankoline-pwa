@@ -204,7 +204,7 @@ export function ShortlistView({
             </p>
           </div>
           {selected.length > 0 && (
-            <div className="flex items-center gap-4 max-w-1/2 px-2">
+            <div className="flex-col sm:flex-row flex items-center gap-4 max-w-1/2 px-2">
               <Button variant={"secondary"} onClick={() => window.print()}>
                 <Printer size={14} />
                 {t("printForm")}

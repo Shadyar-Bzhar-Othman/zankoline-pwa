@@ -145,7 +145,7 @@ function AppShell() {
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground bg-accent px-2 py-1 rounded-md">
+            <span className="text-xs font-medium text-muted-foreground bg-accent px-2 py-2 rounded-md">
               {grade.toFixed(1)}%
             </span>
             <LanguageSwitcher compact />

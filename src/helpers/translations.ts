@@ -158,7 +158,7 @@ export const translations = {
     // Shortlist
     myChoicesTitle: "هەلبژاردنەکانم",
     myChoicesSummary: "{count} بەش هەلبژێردراوە · نمرە: {grade}%",
-    printForm: "چاپکردنی فۆرم",
+    printForm: "چاپ بکە",
     saveForLater: "هەڵیبگرە",
     updateForm: "بگۆڕە",
     printHeaderSubtitle: "نمرەی خوێندکار: {grade}% | بەروار: {date}",
