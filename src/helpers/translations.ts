@@ -159,8 +159,8 @@ export const translations = {
     myChoicesTitle: "هەلبژاردنەکانم",
     myChoicesSummary: "{count} بەش هەلبژێردراوە · نمرە: {grade}%",
     printForm: "چاپکردنی فۆرم",
-    saveForLater: "هەڵیبگرە بۆ دوایی",
-    updateForm: "فۆڕمەکەت بگۆڕە",
+    saveForLater: "هەڵیبگرە",
+    updateForm: "بگۆڕە",
     printHeaderSubtitle: "نمرەی خوێندکار: {grade}% | بەروار: {date}",
     noProgramsSelected: "هێشتا هیچ بەشێک هەلنەبژێردراوە",
     noProgramsSelectedHint:
