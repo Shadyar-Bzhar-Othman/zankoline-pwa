@@ -8,6 +8,13 @@ import {
   type EligibleDepartment,
 } from "@/db/queries";
 import { governorates } from "@/data/static";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 // ─── Home / Search View ───────────────────────────────────────────────────────
 
 export function HomeView({
@@ -145,31 +152,38 @@ export function HomeView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full h-9 ps-8 pe-3 rounded-lg border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition"
+              className="w-full h-9 ps-8 pe-3 py-1 rounded-lg border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition"
             />
           </div>
-          <select
-            value={filterGov}
-            onChange={(e) => setFilterGov(e.target.value)}
-            className="h-9 px-3 rounded-lg border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition min-w-32.5"
-          >
-            <option value="">{t("allGovernorates")}</option>
-            {govs.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="h-9 px-3 rounded-lg border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition min-w-30"
-          >
-            <option value="">{t("allStatuses")}</option>
-            <option value="qualified">{t("statusQualified")}</option>
-            <option value="borderline">{t("statusBorderline")}</option>
-            <option value="unlikely">{t("statusUnlikely")}</option>
-          </select>
+          <Select value={filterGov} onValueChange={setFilterGov}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder={t("allGovernorates")} />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="all">{t("allGovernorates")}</SelectItem>
+
+              {govs.map((g) => (
+                <SelectItem key={g} value={g}>
+                  {g}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder={t("allGovernorates")} />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="">{t("allStatuses")}</SelectItem>
+              <SelectItem value="qualified">{t("statusQualified")}</SelectItem>
+              <SelectItem value="borderline">
+                {t("statusBorderline")}
+              </SelectItem>
+              <SelectItem value="unlikely">{t("statusUnlikely")}</SelectItem>
+            </SelectContent>
+          </Select>
           {hasFilters && (
             <button
               onClick={clearFilters}
