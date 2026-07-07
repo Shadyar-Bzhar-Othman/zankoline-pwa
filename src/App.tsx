@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GraduationCap, LogOut } from "lucide-react";
+import { GraduationCap, LogOut, Pencil } from "lucide-react";
 import { LoginView } from "@/views/LoginView";
 import { Sidebar } from "@/components/custom/Sidebar";
 import { MobileNav } from "@/components/custom/MobileNav";
@@ -12,19 +12,21 @@ import {
   useLanguage,
 } from "@/components/custom/LanguageContext";
 import { LanguageSwitcher } from "@/components/custom/LangugeSwitcher";
+import { EditProfileDialog } from "@/components/custom/EditProfileDialog";
 import { seedDatabase } from "./db/seed";
 import { updateApplicationForm, type EligibleDepartment } from "./db/queries";
 import { toast, Toaster } from "sonner";
 import { useTheme } from "next-themes";
 import type { UpdateApplicationForm } from "./db/schema";
+import { clearSession, loadSession, saveSession } from "./helpers/session";
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
 
 function AppShell() {
   const { t, dir, language } = useLanguage();
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [grade, setGrade] = useState(0);
-  const [name, setName] = useState("");
+  const [loggedIn, setLoggedIn] = useState(() => !!loadSession());
+  const [grade, setGrade] = useState(() => loadSession()?.grade ?? 0);
+  const [name, setName] = useState(() => loadSession()?.name ?? "");
   const [view, setView] = useState<View>("home");
   const [editMode, setEditMode] = useState(false);
   const [selected, setSelected] = useState<EligibleDepartment[]>([]);
@@ -32,6 +34,7 @@ function AppShell() {
   const [formId, setFormId] = useState(0);
   const [isSeeding, setIsSeeding] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   useEffect(() => {
     // Seed the database when the app starts
     const initDb = async () => {
@@ -55,17 +58,27 @@ function AppShell() {
     document.documentElement.lang = language;
   }, [dir, language]);
 
-  const handleLogin = (g: number, name: string) => {
+  const handleLogin = (g: number, userName: string) => {
     setGrade(g);
-    setName(name);
+    setName(userName);
     setLoggedIn(true);
+    saveSession({ name: userName, grade: g });
+  };
+
+  const handleProfileUpdate = (userName: string, g: number) => {
+    setName(userName);
+    setGrade(g);
+    saveSession({ name: userName, grade: g });
+    toast.success(t("profileUpdated"), { position: "top-center" });
   };
 
   const handleSignOut = () => {
     setLoggedIn(false);
     setGrade(0);
+    setName("");
     setSelected([]);
     setView("home");
+    clearSession();
   };
 
   const handleFormUpdate = async (id: number, edit: UpdateApplicationForm) => {
@@ -126,11 +139,13 @@ function AppShell() {
       <Sidebar
         view={view}
         setView={setView}
+        name={name}
         grade={grade}
         shortlistCount={selected.length}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
         onSignOut={handleSignOut}
+        onEditProfile={() => setProfileDialogOpen(true)}
       />
 
       <main className="flex-1 overflow-hidden flex flex-col min-w-0">
@@ -145,9 +160,15 @@ function AppShell() {
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground bg-accent px-2 py-2 rounded-md">
-              {grade.toFixed(1)}%
-            </span>
+            <button
+              type="button"
+              onClick={() => setProfileDialogOpen(true)}
+              className="flex items-center gap-1 text-xs font-medium text-muted-foreground bg-accent px-2 py-2 rounded-md hover:bg-accent/80 transition-colors"
+              title={t("editProfile")}
+            >
+              <span>{grade.toFixed(1)}%</span>
+              <Pencil size={12} />
+            </button>
             <LanguageSwitcher compact />
             <button
               onClick={handleSignOut}
@@ -203,6 +224,14 @@ function AppShell() {
         view={view}
         setView={setView}
         shortlistCount={selected.length}
+      />
+
+      <EditProfileDialog
+        open={profileDialogOpen}
+        onOpenChange={setProfileDialogOpen}
+        name={name}
+        grade={grade}
+        onSave={handleProfileUpdate}
       />
     </div>
   );
