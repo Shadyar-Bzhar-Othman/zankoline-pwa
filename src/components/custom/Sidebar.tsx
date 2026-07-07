@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  Pencil,
 } from "lucide-react";
 import type { View } from "@/types";
 import { LanguageSwitcher } from "./LangugeSwitcher";
@@ -17,21 +18,25 @@ import { ThemeToggle } from "./ThemeToggle";
 interface SidebarProps {
   view: View;
   setView: (v: View) => void;
+  name: string;
   grade: number;
   shortlistCount: number;
   collapsed: boolean;
   setCollapsed: (v: boolean) => void;
   onSignOut: () => void;
+  onEditProfile: () => void;
 }
 
 export function Sidebar({
   view,
   setView,
+  name,
   grade,
   shortlistCount,
   collapsed,
   setCollapsed,
   onSignOut,
+  onEditProfile,
 }: SidebarProps) {
   const { t, dir } = useLanguage();
   const isRtl = dir === "rtl";
@@ -129,23 +134,43 @@ export function Sidebar({
         </div>
 
         {!collapsed && (
-          <div className="rounded-lg bg-accent px-3 py-2.5">
-            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
-              {t("yourGrade")}
+          <button
+            type="button"
+            onClick={onEditProfile}
+            className="w-full rounded-lg bg-accent px-3 py-2.5 text-start hover:bg-accent/80 transition-colors"
+          >
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
+              {t("yourName")}
             </p>
-            <p className="text-xl font-semibold text-accent-foreground">
-              {grade.toFixed(1)}%
+            <p className="text-sm font-semibold text-accent-foreground truncate mb-2">
+              {name}
             </p>
-          </div>
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
+                  {t("yourGrade")}
+                </p>
+                <p className="text-xl font-semibold text-accent-foreground">
+                  {grade.toFixed(1)}%
+                </p>
+              </div>
+              <Pencil size={14} className="shrink-0 text-muted-foreground" />
+            </div>
+          </button>
         )}
         {collapsed && (
-          <div className="flex justify-center w-full">
-            <div className="w-full h-8 rounded-lg bg-accent flex items-center justify-center">
+          <button
+            type="button"
+            onClick={onEditProfile}
+            title={t("editProfile")}
+            className="flex justify-center w-full"
+          >
+            <div className="w-full h-8 rounded-lg bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors">
               <span className="font-bold text-accent-foreground">
                 {Math.round(grade)}
               </span>
             </div>
-          </div>
+          </button>
         )}
         <button
           onClick={onSignOut}

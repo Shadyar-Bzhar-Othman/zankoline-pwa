@@ -31,6 +31,11 @@ export const translations = {
     navHistory: "History",
     navHistoryShort: "History",
     yourGrade: "Your Grade",
+    yourName: "Your Name",
+    editProfile: "Edit profile",
+    editProfileTitle: "Update name & grade",
+    saveProfile: "Save changes",
+    profileUpdated: "Profile updated",
     signOut: "Sign Out",
 
     // Home / Search
@@ -128,6 +133,11 @@ export const translations = {
     navHistory: "مێژوو",
     navHistoryShort: "مێژوو",
     yourGrade: "نمرەکەت",
+    yourName: "ناوەکەت",
+    editProfile: "گۆڕینی زانیاری",
+    editProfileTitle: "ناو و نمرە بگۆڕە",
+    saveProfile: "پاشەکەوتکردن",
+    profileUpdated: "زانیارییەکانت نوێکرانەوە",
     signOut: "چوونەدەرەوە",
 
     // Home / Search
