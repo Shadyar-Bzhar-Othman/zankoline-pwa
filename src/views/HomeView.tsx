@@ -20,11 +20,17 @@ export function HomeView({
   grade,
   selected,
   setSelected,
+  editMode,
+  formLabel,
 }: {
   name: string;
   grade: number;
   selected: EligibleDepartment[];
-  setSelected: (s: EligibleDepartment[]) => void;
+  setSelected: (
+    s: EligibleDepartment[] | ((prev: EligibleDepartment[]) => EligibleDepartment[]),
+  ) => void;
+  editMode?: boolean;
+  formLabel?: string;
 }) {
   const { t } = useLanguage();
   const [search, setSearch] = useState("");
@@ -131,6 +137,11 @@ export function HomeView({
 
   return (
     <div className="page-shell">
+      {editMode && formLabel && (
+        <div className="mx-4 md:mx-6 mt-4 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 text-sm text-foreground">
+          {t("editingFormBanner", { label: formLabel })}
+        </div>
+      )}
       <div className="page-header">
         <div>
           <h1 className="page-title">{t("searchProgramsTitle")}</h1>

@@ -10,6 +10,7 @@ interface PopupDialogProps {
   onSave: (form: ApplicationForm) => void;
   existingForm?: Partial<ApplicationForm>;
   initialLabel?: string;
+  choiceCount?: number;
   editMode?: boolean;
 }
 
@@ -19,6 +20,7 @@ export const PopupDialog = ({
   onSave,
   existingForm,
   initialLabel = "",
+  choiceCount,
   editMode,
 }: PopupDialogProps) => {
   const { t, language } = useLanguage();
@@ -126,7 +128,19 @@ export const PopupDialog = ({
               autoFocus
             />
             <p className="text-xs text-muted-foreground">{t("labelText")}</p>
+            {label.trim() && (
+              <div className="rounded-lg border border-border bg-secondary/50 px-3 py-2.5 space-y-0.5">
+                <p className="text-xs text-muted-foreground">{t("formLabelPreview")}</p>
+                <p className="text-sm font-semibold text-foreground">{label.trim()}</p>
+              </div>
+            )}
           </div>
+
+          {choiceCount !== undefined && (
+            <div className="rounded-lg bg-accent/60 px-3 py-2.5 text-sm text-muted-foreground">
+              {t("formChoicesCount", { count: choiceCount })}
+            </div>
+          )}
 
           {error && (
             <div className="flex items-center gap-2 text-destructive bg-destructive/10 rounded-lg p-3">
@@ -141,7 +155,7 @@ export const PopupDialog = ({
             {t("cancelText")}
           </Button>
           <Button type="button" onClick={handleSave}>
-            {t("buttonText")}
+            {editMode ? t("updateForm") : t("buttonText")}
           </Button>
         </div>
       </div>
