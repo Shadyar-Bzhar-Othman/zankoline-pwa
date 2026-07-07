@@ -92,11 +92,13 @@ export const translations = {
     // History
     historyTitle: "History",
     historySubtitle: "Previous admission planning sessions",
+    newForm: "New form",
     noHistoryYet: "No history yet",
     noHistoryHint: "Your saved sessions will appear here.",
     gradeLabel: "Grade:",
     facultiesChosen: "faculties chosen",
     viewDetails: "View Details",
+    editForm: "Edit",
     moreCount: "+{count} more",
 
     // Language switcher
@@ -115,6 +117,10 @@ export const translations = {
       "Add a label to help you distinguish between different scenarios",
     buttonText: "Save Form",
     cancelText: "Cancel",
+    formChoicesCount: "{count} programs in this form",
+    formLabelPreview: "Your label",
+    addPrograms: "Add Programs",
+    editingFormBanner: "Editing form: {label}",
 
     // Toast messages
     formCreated: "Your form was successfully saved 😄",
@@ -210,11 +216,13 @@ export const translations = {
     // History
     historyTitle: "مێژوو",
     historySubtitle: "فۆڕمە هەڵگیراوەکانت ببینە",
+    newForm: "فۆڕمی نوێ",
     noHistoryYet: "هیچ فۆڕمێکی هەڵگیراوت نییە",
     noHistoryHint: "فۆڕمە پاشەکەوتکراوەکانت لێرە دەردەکەون.",
     gradeLabel: "نمرە:",
     facultiesChosen: "کۆلێژ هەلبژێردراوە",
     viewDetails: "بینینی وردەکاری",
+    editForm: "دەستکاری",
     moreCount: "+{count} زیاتر",
 
     // Language switcher
@@ -233,6 +241,10 @@ export const translations = {
     labelText: "پێناسێک بنوسە بۆ جیاکردنەوەی هەل و مەرجی جیاواز",
     buttonText: "هەڵگرتن",
     cancelText: "پاشگەزبونەوە",
+    formChoicesCount: "{count} بەش لەم فۆڕمەدا",
+    formLabelPreview: "پێناسەکەت",
+    addPrograms: "زیادکردنی بەش",
+    editingFormBanner: "دەستکاری فۆڕم: {label}",
 
     // Toast messages
     formCreated: "فۆڕمەکەت بە سەرکەوتووی هەڵگیرا 😄",

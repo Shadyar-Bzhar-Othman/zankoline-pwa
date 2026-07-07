@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { gradeStatus, governorateLabel } from "@/helpers";
 import { Badge, STATUS_KEY } from "@/components/custom/Badge";
 import { useLanguage } from "@/components/custom/LanguageContext";
-import { BookMarked, Printer, GripVertical, Trash2, Save } from "lucide-react";
-import { createApplicationForm, type EligibleDepartment } from "@/db/queries";
+import { BookMarked, Printer, GripVertical, Trash2, Save, Plus } from "lucide-react";
+import { createApplicationForm, updateApplicationForm, type EligibleDepartment } from "@/db/queries";
 import type { ApplicationForm } from "@/db/schema";
 import { PopupDialog } from "@/components/custom/PopupDialog";
 import { toast } from "sonner";
@@ -18,7 +18,11 @@ export function ShortlistView({
   onDelete,
   onReorder,
   onFormSaved,
+  onFormUpdated,
+  onAddPrograms,
   editMode,
+  formId,
+  formLabel = "",
 }: {
   name: string;
   selected: EligibleDepartment[];
@@ -26,8 +30,11 @@ export function ShortlistView({
   onDelete: (id: number) => void;
   onReorder: (deps: EligibleDepartment[]) => void;
   onFormSaved: () => void;
+  onFormUpdated?: (label: string) => void;
+  onAddPrograms?: () => void;
   editMode?: boolean;
-  formId?: number; // ID of the existing form to update
+  formId?: number;
+  formLabel?: string;
 }) {
   const { t, dir, language } = useLanguage();
   const choices = selected;
@@ -50,20 +57,30 @@ export function ShortlistView({
       studentName: name,
       studentGrade: grade,
       choices: selected,
+      label: editMode ? formLabel : undefined,
     });
     setIsDialogOpen(true);
   };
 
   const handleSave = async (form: ApplicationForm) => {
     try {
-      await createApplicationForm(
-        form.studentName,
-        form.studentGrade,
-        form.choices,
-        form.label,
-      );
-      toast.success(t("formCreated"), { position: "top-center" });
-      onFormSaved();
+      if (editMode && formId) {
+        await updateApplicationForm(formId, {
+          choices: selected,
+          label: form.label,
+        });
+        toast.success(t("formUpdated"), { position: "top-center" });
+        onFormUpdated?.(form.label ?? "");
+      } else {
+        await createApplicationForm(
+          form.studentName,
+          form.studentGrade,
+          form.choices,
+          form.label,
+        );
+        toast.success(t("formCreated"), { position: "top-center" });
+        onFormSaved();
+      }
     } catch (error) {
       console.error(`error detected: ${error}`);
       toast.error(t("generalError"), { position: "top-center" });
@@ -175,13 +192,17 @@ export function ShortlistView({
         onClose={() => setIsDialogOpen(false)}
         onSave={handleSave}
         existingForm={currentForm}
-        editMode={editMode} // Pass editMode to dialog to show appropriate title/button
+        initialLabel={currentForm.label ?? formLabel}
+        choiceCount={selected.length}
+        editMode={editMode && !!formId}
       />
       <div className="page-shell">
         <div className="page-header no-print">
           <div className="page-header-row">
             <div className="min-w-0">
-              <h1 className="page-title">{t("myChoicesTitle")}</h1>
+              <h1 className="page-title">
+                {editMode && formLabel ? formLabel : t("myChoicesTitle")}
+              </h1>
               <p className="page-subtitle">
                 {t("myChoicesSummary", {
                   count: choices.length,
@@ -189,8 +210,18 @@ export function ShortlistView({
                 })}
               </p>
             </div>
-            {selected.length > 0 && (
-              <div className="page-actions">
+            <div className="page-actions">
+              {editMode && formId && onAddPrograms && (
+                <Button
+                  variant="outline"
+                  className="page-action-btn"
+                  onClick={onAddPrograms}
+                >
+                  <Plus size={15} />
+                  {t("addPrograms")}
+                </Button>
+              )}
+              {selected.length > 0 && (
                 <Button
                   variant="outline"
                   className="page-action-btn"
@@ -199,18 +230,27 @@ export function ShortlistView({
                   <Printer size={15} />
                   {t("printForm")}
                 </Button>
-                {!editMode && (
-                  <Button
-                    variant="default"
-                    className="page-action-btn"
-                    onClick={handleSaveClick}
-                  >
-                    <Save size={15} />
-                    {t("saveForLater")}
-                  </Button>
-                )}
-              </div>
-            )}
+              )}
+              {!editMode && selected.length > 0 ? (
+                <Button
+                  variant="default"
+                  className="page-action-btn"
+                  onClick={handleSaveClick}
+                >
+                  <Save size={15} />
+                  {t("saveForLater")}
+                </Button>
+              ) : editMode && formId ? (
+                <Button
+                  variant="default"
+                  className="page-action-btn"
+                  onClick={handleSaveClick}
+                >
+                  <Save size={15} />
+                  {t("updateForm")}
+                </Button>
+              ) : null}
+            </div>
           </div>
         </div>
 

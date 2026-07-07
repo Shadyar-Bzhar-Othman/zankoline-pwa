@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GraduationCap, LogOut, Pencil } from "lucide-react";
 import { LoginView } from "@/views/LoginView";
 import { Sidebar } from "@/components/custom/Sidebar";
@@ -18,7 +18,7 @@ import { seedDatabase } from "./db/seed";
 import { updateApplicationForm, type EligibleDepartment } from "./db/queries";
 import { toast, Toaster } from "sonner";
 import { useTheme } from "next-themes";
-import type { UpdateApplicationForm } from "./db/schema";
+import type { ApplicationForm } from "./db/schema";
 import { clearSession, loadSession, saveSession } from "./helpers/session";
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
@@ -33,6 +33,7 @@ function AppShell() {
   const [selected, setSelected] = useState<EligibleDepartment[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [formId, setFormId] = useState(0);
+  const [formLabel, setFormLabel] = useState("");
   const [isSeeding, setIsSeeding] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
@@ -82,21 +83,48 @@ function AppShell() {
     clearSession();
   };
 
-  const handleFormUpdate = async (id: number, edit: UpdateApplicationForm) => {
-    try {
-      await updateApplicationForm(id, edit);
-      toast.success(t("formUpdated"), { position: "top-center" });
-    } catch (error) {
-      console.error(`error detected: ${error}`);
-      toast.error(t("generalError"), { position: "top-center" });
-    }
-  };
-  const handleViewSession = (deps: EligibleDepartment[], fId: number) => {
-    setFormId(fId);
+  const syncFormChoices = useCallback(
+    async (choices: EligibleDepartment[]) => {
+      if (!editMode || !formId) return;
+      try {
+        await updateApplicationForm(formId, { choices });
+      } catch (error) {
+        console.error(`error detected: ${error}`);
+        toast.error(t("generalError"), { position: "top-center" });
+      }
+    },
+    [editMode, formId, t],
+  );
+
+  const setSelectedAndSync = useCallback(
+    (value: EligibleDepartment[] | ((prev: EligibleDepartment[]) => EligibleDepartment[])) => {
+      setSelected((prev) => {
+        const next = typeof value === "function" ? value(prev) : value;
+        if (editMode && formId) {
+          void syncFormChoices(next);
+        }
+        return next;
+      });
+    },
+    [editMode, formId, syncFormChoices],
+  );
+
+  const handleViewSession = (form: ApplicationForm) => {
+    setFormId(form.id ?? 0);
+    setFormLabel(form.label ?? "");
     setEditMode(true);
-    setSelected(deps);
+    setSelected(form.choices);
     setView("shortlist");
   };
+
+  const handleNewForm = () => {
+    setFormId(0);
+    setFormLabel("");
+    setEditMode(false);
+    setSelected([]);
+    setView("home");
+  };
+
   const onFormSaved = () => {
     setSelected([]);
   };
@@ -189,7 +217,9 @@ function AppShell() {
               name={name}
               grade={grade}
               selected={selected}
-              setSelected={setSelected}
+              setSelected={setSelectedAndSync}
+              editMode={editMode}
+              formLabel={formLabel}
             />
           )}
           {view === "shortlist" && (
@@ -198,19 +228,24 @@ function AppShell() {
               selected={selected}
               grade={grade}
               onDelete={async (id) => {
-                setSelected(selected.filter((x) => x.thresholdId !== id));
-                await handleFormUpdate(formId, {
-                  choices: selected.filter((x) => x.thresholdId !== id),
-                });
+                const next = selected.filter((x) => x.thresholdId !== id);
+                setSelected(next);
+                if (editMode && formId) {
+                  await syncFormChoices(next);
+                }
               }}
               onFormSaved={onFormSaved}
+              onFormUpdated={(label) => setFormLabel(label)}
               onReorder={async (newSelected) => {
                 setSelected(newSelected);
-                await handleFormUpdate(formId, {
-                  choices: newSelected,
-                });
+                if (editMode && formId) {
+                  await syncFormChoices(newSelected);
+                }
               }}
+              onAddPrograms={() => setView("home")}
               editMode={editMode}
+              formId={formId || undefined}
+              formLabel={formLabel}
             />
           )}
           {view === "history" && (
@@ -218,6 +253,7 @@ function AppShell() {
               name={name}
               grade={grade}
               onViewSession={handleViewSession}
+              onNewForm={handleNewForm}
               clearSelection={() => setSelected([])}
             />
           )}
