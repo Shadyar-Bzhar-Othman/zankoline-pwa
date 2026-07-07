@@ -128,9 +128,16 @@
     @apply border-border outline-ring/50;
   }
 
+  html[lang="en"] {
+    font-family: "Poppins", sans-serif;
+  }
+
+  html[lang="ckb"] {
+    font-family: "UniSIRWAN Expo", sans-serif;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: "Fira Code", monospace;
     font-optical-sizing: auto;
   }
 

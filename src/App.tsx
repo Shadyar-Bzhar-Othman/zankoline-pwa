@@ -121,7 +121,7 @@ function AppShell() {
   return (
     <div
       dir={dir}
-      className="flex h-screen overflow-hidden bg-background font-[Inter,sans-serif]"
+      className="flex h-screen overflow-hidden bg-background"
     >
       <Sidebar
         view={view}
